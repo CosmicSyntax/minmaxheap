@@ -1,7 +1,10 @@
 use minmaxheap::Tree;
 
 fn main() {
-    let test = Tree::new("min", 10).expect("Something did not work");
+    let mut test = Tree::new("min", 10).expect("Something did not work");
 
-    println!("{}", test.heap);
+    test.add(30);
+    test.add(20);
+
+    println!("{}", test.heap.unwrap());
 }
