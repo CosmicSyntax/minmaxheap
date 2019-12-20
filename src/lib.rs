@@ -1,78 +1,63 @@
 use std::fmt;
 
-pub struct Heap {
-    pub value: i32,
-    pub left: Option<Box<Heap>>,
-    pub right: Option<Box<Heap>>,
-}
-
-pub struct Tree<'a> {
-    pub heap: Option<Box<Heap>>,
+pub struct Heap<'a> {
+    pub capacity: usize,
+    pub heap_size: usize,
     pub kind: &'a str,
+    heap: Vec<i32>,
 }
 
-impl<'a> Tree<'a> {
-    pub fn new(kind: &str, value: i32) -> Result<Tree, &str> {
-        if kind == "max" || kind == "min" {
-            Ok(Tree {
-                heap: Some(Box::new(Heap {
-                    value,
-                    left: None,
-                    right: None,
-                })),
+impl<'a> Heap<'a> {
+    pub fn new(kind: &str, capacity: usize) -> Result<Heap, &str> {
+        if kind == "min" || kind == "max" {
+            Ok(Heap {
+                capacity,
+                heap_size: 0,
                 kind,
+                heap: Vec::with_capacity(capacity),
             })
         } else {
-            Err("The type of heap you entered is not one of the options.")
+            Err("You type of heap you specified is not supported.")
         }
     }
 
-    #[inline]
     pub fn add(&mut self, value: i32) {
-        Tree::seek(&mut self.heap, value);
+        self.heap.push(value);
+        self.sort();
     }
 
-    fn seek(start: &mut Option<Box<Heap>>, value: i32) {
-        // An associated function to search for the next empty node
-
-        if let None = start.as_mut().unwrap().left {
-            // Check left
-            start.as_mut().unwrap().left = Some(Box::new(Heap {
-                value,
-                left: None,
-                right: None,
-            }))
-        } else if let None = start.as_mut().unwrap().right {
-            // Check right
-            start.as_mut().unwrap().right = Some(Box::new(Heap {
-                value,
-                left: None,
-                right: None,
-            }))
+    fn sort(&mut self) {
+        if self.kind == "min" {
         } else {
-            // Recursive find open if both left and right are occupied
-            Tree::seek(&mut start.as_mut().unwrap().left, value);
-            Tree::seek(&mut start.as_mut().unwrap().right, value);
+        }
+        unimplemented!();
+    }
+
+    fn left(&mut self, index: usize) -> i32 {
+        self.heap[2 * index + 1]
+    }
+
+    fn right(&mut self, index: usize) -> i32 {
+        self.heap[2 * index + 2]
+    }
+
+    pub fn peak(&mut self) -> Result<i32, &str> {
+        if self.heap.len() == 0 {
+            Err("There is nothing in the heap.")
+        } else {
+            Ok(self.heap[0])
         }
     }
 }
 
-impl fmt::Display for Heap {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let left = match &self.left {
-            Some(_) => String::from("There is a value on the left branch"),
-            None => String::from("None"),
-        };
+// impl<'a> fmt::Display for Heap<'a> {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         let left = self.heap[]
 
-        let right = match &self.right {
-            Some(_) => String::from("There is a value on the right branch"),
-            None => String::from("None"),
-        };
-
-        write!(
-            f,
-            "Current Node: {}\nLeft Child: {}\nRight Child: {}",
-            self.value, left, right
-        )
-    }
-}
+//         write!(
+//             f,
+//             "Current Node: {}\nLeft Child: {}\nRight Child: {}",
+//             self.value, left, right
+//         )
+//     }
+// }
