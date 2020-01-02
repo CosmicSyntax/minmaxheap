@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Heap","This is a struct where the binary heap is stored, along with other metadata. Click on \"Heap\" to explore the methods for this data structure."]]});

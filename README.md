@@ -1,22 +1,25 @@
 # Binary Heap
  A Binary Heap is either Min Heap or Max Heap. In a Min Binary Heap, the key at root must be minimum among all keys present in Binary Heap. The same property must be recursively true for all nodes in Binary Tree. Max Binary Heap is similar to MinHeap, except the root must be maximum among all keys present.
 
+## Documentation
+[Click here to explore the documentation](https://cosmicsyntax.github.io/minmaxheap/minmaxheap/)
+
 ## Example
 The following piece of code uses the library for min heap
 ```rust
-// Create a instance of the Heap
-let mut test = Heap::new("min", 6).expect("Something did not work");
+// Create an instance of the Heap
+let mut min = Heap::new("min", 6).expect("Something did not work");
 
 // Add value into the binary tree in no particular order
-test.add(20);
-test.add(10);
-test.add(5);
-test.add(100);
-test.add(2);
-test.add(40);
+min.add(20);
+min.add(10);
+min.add(5);
+min.add(100);
+min.add(2);
+min.add(40);
 
 // Print out the results
-println!("{}", test);
+println!("{}", min);
 ```
 The result output is
 ```bash
@@ -31,7 +34,7 @@ Node: 10 Left: 40
 
 The following piece of code uses the library for max heap
 ```rust
-// Create a instance of the Heap
+// Create an instance of the Heap
 let mut test = Heap::new("max", 6).expect("Something did not work");
 
 // Add value into the binary tree in no particular order

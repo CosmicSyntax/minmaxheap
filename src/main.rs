@@ -1,12 +1,16 @@
 use minmaxheap::Heap;
 
 fn main() {
-    let mut test = Heap::new("max", 10).expect("Something did not work");
-    test.add(20);
-    test.add(10);
-    test.add(5);
-    test.add(100);
-    test.add(2);
-    test.add(40);
-    println!("{}", test);
+    let mut heap = Heap::new("max", 10).expect("Something did not work");
+    heap.add(20);
+    heap.add(10);
+    heap.add(5);
+    heap.add(100);
+    heap.add(2);
+    heap.add(40);
+    heap.add(40);
+    println!("{}", heap);
+
+    heap.invert();
+    println!("{}", heap);
 }

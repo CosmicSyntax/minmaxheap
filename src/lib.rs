@@ -1,13 +1,39 @@
 //! # Binary Heap
 //! This crate implements both min and max binary heaps.
 
+//! # Quick Start
+//! ```rust
+//! use minmaxheap::Heap;
+//!
+//! // Instantiate a Heap
+//! let mut heap = Heap::new("max", 10).expect("Something did not work");
+//!
+//! // Add data
+//! heap.add(20);
+//! heap.add(10);
+//! heap.add(5);
+//! heap.add(100);
+//! heap.add(2);
+//! heap.add(40);
+//!
+//! // Print into terminal
+//! println!("{}", heap);
+//! 
+//! // Invert the heap from max to min
+//! heap.invert();
+//! 
+//! // Print into terminal
+//! println!("{}", heap);
+//! ```
+
 use std::{fmt, mem};
 
 /// This is a struct where the binary heap is stored, along with other metadata.
-/// Click on "Heap" to explore the methods for this data strcuture.
+/// Click on "Heap" to explore the methods for this data structure.
 pub struct Heap<'a> {
     /// Initial size of the vector to allocate when struct is instantiated.
-    /// You can add more than the initial size, but should avoid this for performance.
+    /// You can add more than the initial size, but should avoid this for performance
+    /// reasons.
     pub capacity: usize,
     /// This is the counter for the number of nodes in the heap. Counter is set to
     /// 1 as soon as the first node is added.
@@ -44,8 +70,8 @@ impl<'a> Heap<'a> {
     }
 
     /// Add nodes into the heap. The nodes do not have to be entered in any order.
-    /// The add method calls the sort (a private method) which the binary heap is
-    /// ordered correctly.
+    /// The add method calls the sort (a private) method which the binary heap is
+    /// ordered correctly. Duplicate nodes are allowed.
     /// # Example
     /// ```rust
     /// let mut min = minmaxheap::Heap::new("min", 10).expect("Something did not go right.");
@@ -96,7 +122,7 @@ impl<'a> Heap<'a> {
     }
 
     /// Return the value in the top node. If min was chosen, this would be the
-    /// smallest value in the binary heap. This would return the max if mas 
+    /// smallest value in the binary heap. This would return the max if max
     /// was chosen.
     /// # Example
     /// ```rust
@@ -113,6 +139,36 @@ impl<'a> Heap<'a> {
             Ok(self.heap[0])
         }
     }
+
+    /// Takes the existing heap and inverts it from max to min or min to max.
+    /// Under the hood, this method basically drains the vector and addes them back into
+    /// the heap using the existing add method. Future update should include an optimized
+    /// version of invert that doesn't take O(nlogn).
+    /// # Example
+    /// ```rust
+    /// let mut heap = minmaxheap::Heap::new("min", 10).expect("Something did not go right.");
+    /// heap.add(10);
+    /// heap.add(40);
+    /// heap.add(5);
+    /// heap.invert();
+    /// assert_eq!(40, heap.peak().unwrap());
+    /// ```
+    pub fn invert(&mut self) {
+        // first... change min to max, or max to min
+        if self.kind == "min" {
+            self.kind = "max";
+        } else {
+            self.kind = "min";
+        }
+
+        let tmp: Vec<i32> = self.heap.drain(..).collect();
+        self.heap_size = 0;
+
+        for i in tmp.into_iter() {
+            self.add(i);
+        }
+
+    }
 }
 
 impl<'a> fmt::Display for Heap<'a> {
@@ -121,7 +177,8 @@ impl<'a> fmt::Display for Heap<'a> {
         let n = self.heap_size - 1;
         let mut message = String::new();
 
-        message.push_str(&format!("Number of nodes: {}\n", self.heap_size));
+        message.push_str(&format!("Number of nodes: {} | Type: {}\n", 
+            self.heap_size, self.kind));
 
         for i in 0..=lowest_parent {
             let left = Heap::left(i);
@@ -135,18 +192,18 @@ impl<'a> fmt::Display for Heap<'a> {
                 ));
             } else {
                 // check for children
-                if left <= n {
-                    // Only left
-                    let node = self.heap[i];
-                    message.push_str("---------------------------------------\n");
-                    message.push_str(&format!("Node: {} Left: {} \n", node, self.heap[left]));
-                } else {
+                if right <= n {
+                    // Only right
                     let node = self.heap[i];
                     message.push_str("---------------------------------------\n");
                     message.push_str(&format!(
                         "Node: {} Left: {} Right: {}\n",
                         node, self.heap[left], self.heap[right]
                     ));
+                } else {
+                    let node = self.heap[i];
+                    message.push_str("---------------------------------------\n");
+                    message.push_str(&format!("Node: {} Left: {} \n", node, self.heap[left]));
                 }
             }
         }
@@ -173,12 +230,25 @@ mod tests {
 
     #[test]
     fn max_check() {
-        let mut min = Heap::new("max", 10).expect("Something did not go right.");
-        min.add(100);
-        min.add(50);
-        min.add(30);
-        min.add(10);
+        let mut max = Heap::new("max", 10).expect("Something did not go right.");
+        max.add(100);
+        max.add(50);
+        max.add(30);
+        max.add(10);
 
-        assert_eq!(100, min.peak().unwrap());
+        assert_eq!(100, max.peak().unwrap());
+    }
+
+    #[test]
+    fn invert_check() {
+        let mut heap = Heap::new("max", 10).expect("Something did not go right.");
+        heap.add(100);
+        heap.add(50);
+        heap.add(30);
+        heap.add(10);
+        heap.invert();
+
+        assert_eq!(10, heap.peak().unwrap());
+        assert_eq!("min", heap.kind);
     }
 }
