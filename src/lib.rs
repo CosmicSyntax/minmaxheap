@@ -180,7 +180,9 @@ impl<'a> fmt::Display for Heap<'a> {
         message.push_str(&format!("Number of nodes: {} | Type: {}\n", 
             self.heap_size, self.kind));
 
-        for i in 0..=lowest_parent {
+        for i in 0..(lowest_parent + 1) {
+            // #..=# is slower than #..# bc the former is not compiler optimized
+            // loop unrolling is not performed for the former...
             let left = Heap::left(i);
             let right = Heap::right(i);
             if i != lowest_parent {
